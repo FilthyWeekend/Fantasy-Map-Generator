@@ -159,7 +159,7 @@ let notes = [];
 let rulers = new Rulers();
 let customization = 0;
 
-let biomesData = Biomes.getDefault();
+let biomesData = NBiomes.getDefault();
 let nameBases = Names.getNameBases(); // cultures-related data
 
 let color = d3.scaleSequential(d3.interpolateSpectral); // default color scheme
@@ -653,7 +653,7 @@ async function generate(options) {
     createDefaultRuler();
 
     Rivers.generate();
-    Biomes.define();
+    NBiomes.define();
 
     rankCells();
     Cultures.generate();
@@ -1161,12 +1161,6 @@ function reGraph() {
   });
 
   TIME && console.timeEnd("reGraph");
-}
-
-function isWetLand(moisture, temperature, height) {
-  if (moisture > 40 && temperature > -2 && height < 25) return true; //near coast
-  if (moisture > 24 && temperature > -2 && height > 24 && height < 60) return true; //off coast
-  return false;
 }
 
 // assess cells suitability to calculate population and rand cells for culture center and burgs placement

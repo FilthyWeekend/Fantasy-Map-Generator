@@ -376,7 +376,7 @@ function editHeightmap(options) {
       pack.cells.biome[i] =
         isLand && biome[g]
           ? biome[g]
-          : Biomes.getId(grid.cells.prec[g], grid.cells.temp[g], pack.cells.h[i], Boolean(pack.cells.r[i]));
+          : NBiomes.getId(grid.cells.prec[g], grid.cells.temp[g], pack.cells.h[i], Boolean(pack.cells.r[i]));
 
       if (!isLand) continue;
       pack.cells.culture[i] = culture[g];

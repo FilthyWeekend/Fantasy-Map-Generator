@@ -1,6 +1,6 @@
 "use strict";
 
-window.Biomes = (function () {
+window.NBiomes = (function () {
   const MIN_LAND_HEIGHT = 20;
 
   const getDefault = () => {
@@ -9,15 +9,15 @@ window.Biomes = (function () {
       "Hot desert",
       "Cold desert",
       "Savanna",
-      "Grassland",
-      "Tropical seasonal forest",
-      "Temperate deciduous forest",
-      "Tropical rainforest",
-      "Temperate rainforest",
+      "Bamboo grove",
+      "Rainforest",
+      "Grassland", // 6
+      "Swamp",
+      "Forest",
       "Taiga",
       "Tundra",
-      "Glacier",
-      "Wetland"
+      "Glacier", // 11
+      "Marsh"
     ];
 
     const color = [
@@ -33,7 +33,7 @@ window.Biomes = (function () {
       "#4b6b32",
       "#96784b",
       "#d5e7eb",
-      "#0b9131"
+      "#78042c"
     ];
     const habitability = [0, 4, 10, 22, 30, 50, 100, 80, 90, 12, 4, 0, 12];
     const iconsDensity = [0, 3, 2, 120, 120, 120, 120, 150, 150, 100, 5, 0, 250];
@@ -45,8 +45,8 @@ window.Biomes = (function () {
       {grass: 1},
       {acacia: 8, palm: 1},
       {deciduous: 1},
-      {acacia: 5, palm: 3, deciduous: 1, swamp: 1},
-      {deciduous: 6, swamp: 1},
+      {acacia: 5, swamp: 5},
+      {palm: 6, swamp: 1},
       {conifer: 1},
       {grass: 1},
       {},
@@ -106,10 +106,10 @@ window.Biomes = (function () {
   }
 
   function getId(moisture, temperature, height, hasRiver) {
-    if (height < 20) return 0; // all water cells: marine biome
+    if (height < MIN_LAND_HEIGHT) return 0; // all water cells: marine biome
     if (temperature < -5) return 11; // too cold: permafrost biome
     if (temperature >= 25 && !hasRiver && moisture < 8) return 1; // too hot and dry: hot desert biome
-    if (isWetland(moisture, temperature, height)) return 12; // too wet: wetland biome
+    if (isMarsh(moisture, temperature, height)) return 12; // too wet: masrh biome
 
     // in other cases use biome matrix
     const moistureBand = Math.min((moisture / 5) | 0, 4); // [0-4]
@@ -117,8 +117,8 @@ window.Biomes = (function () {
     return biomesData.biomesMartix[moistureBand][temperatureBand];
   }
 
-  function isWetland(moisture, temperature, height) {
-    if (temperature <= -2) return false; // too cold
+  function isMarsh(moisture, temperature, height) {
+    if (temperature <= 0 || temperature > 20) return false; // too cold or too hot
     if (moisture > 40 && height < 25) return true; // near coast
     if (moisture > 24 && height > 24 && height < 60) return true; // off coast
     return false;

@@ -230,7 +230,7 @@ function editBiomes() {
       Taiga: "Taiga",
       Tundra: "Tundra",
       Glacier: "Glacier",
-      Wetland: "Wetland"
+      Marsh: "Marsh"
     };
     const customBiomeLink = `https://en.wikipedia.org/w/index.php?search=${biomeName}`;
     const link = pages[biomeName] ? wikiBase + pages[biomeName] : customBiomeLink;
@@ -464,8 +464,8 @@ function editBiomes() {
   }
 
   function restoreInitialBiomes() {
-    biomesData = Biomes.getDefault();
-    Biomes.define();
+    biomesData = NBiomes.getDefault();
+    NBiomes.define();
     drawBiomes();
     recalculatePopulation();
     refreshBiomesEditor();

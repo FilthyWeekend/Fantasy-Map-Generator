@@ -286,7 +286,7 @@ async function parseLoadedData(data, mapVersion) {
 
     {
       const biomes = data[3].split("|");
-      biomesData = Biomes.getDefault();
+      biomesData = NBiomes.getDefault();
       biomesData.color = biomes[0].split(",");
       biomesData.habitability = biomes[1].split(",").map(h => +h);
       biomesData.name = biomes[2].split(",");

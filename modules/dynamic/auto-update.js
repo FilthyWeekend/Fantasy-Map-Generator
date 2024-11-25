@@ -102,9 +102,9 @@ export function resolveVersionConflicts(mapVersion) {
       this.innerHTML = /* html */ `<tspan x="${shift}">${text}</tspan>`;
     });
 
-    // v1.0 added new biome - Wetland
-    biomesData.name.push("Wetland");
-    biomesData.color.push("#0b9131");
+    // v1.0 added new biome - Marsh
+    biomesData.name.push("Marsh");
+    biomesData.color.push("#78042c");
     biomesData.habitability.push(12);
   }
 
