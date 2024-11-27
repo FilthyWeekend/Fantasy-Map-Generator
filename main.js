@@ -905,9 +905,10 @@ function calculateTemperatures() {
   TIME && console.time("calculateTemperatures");
   const cells = grid.cells;
   cells.temp = new Int8Array(cells.i.length); // temperature array
+  cells.lat = new Int8Array(cells.i.length); // latitude array 
 
   const {temperatureEquator, temperatureNorthPole, temperatureSouthPole} = options;
-  const tropics = [16, -20]; // tropics zone
+  const tropics = [20, -20]; // tropics zone
   const tropicalGradient = 0.15;
 
   const tempNorthTropic = temperatureEquator - tropics[0] * tropicalGradient;
@@ -925,13 +926,14 @@ function calculateTemperatures() {
     DEBUG.temperature && console.info(`${rn(rowLatitude)}° sea temperature: ${rn(tempSeaLevel)}°C`);
 
     for (let cellId = rowCellId; cellId < rowCellId + grid.cellsX; cellId++) {
-      const tempAltitudeDrop = getAltitudeTemperatureDrop(cells.h[cellId]);
+      const tempAltitudeDrop = getAltitudeTemperatureDrop(cells.h[cellId], rowLatitude);
       cells.temp[cellId] = minmax(tempSeaLevel - tempAltitudeDrop, -128, 127);
+      cells.lat[cellId] = rowLatitude;
     }
   }
 
   function calculateSeaLevelTemp(latitude) {
-    const isTropical = latitude <= 16 && latitude >= -20;
+    const isTropical = latitude <= 20 && latitude >= -20;
     if (isTropical) return temperatureEquator - Math.abs(latitude) * tropicalGradient;
 
     return latitude > 0
@@ -940,10 +942,11 @@ function calculateTemperatures() {
   }
 
   // temperature drops by 6.5°C per 1km of altitude
-  function getAltitudeTemperatureDrop(h) {
+  function getAltitudeTemperatureDrop(h, l) {
     if (h < 20) return 0;
     const height = Math.pow(h - 18, exponent);
-    return rn((height / 1000) * 6.5);
+    const tempDropPkm = Math.abs(l) < 20 ? 1.5 : 6.5
+    return rn((height / 1000) * tempDropPkm);
   }
 
   TIME && console.timeEnd("calculateTemperatures");

@@ -4,9 +4,9 @@ const heightmapTemplates = (function () {
   const dt = `Hill 7 160 0-100 0-100
     Range 7 50 0-100 0-100
     Mask -2 0 0 0
-    Trough 440 5 0-100 0-100
+    Trough 100 10 0-100 0-100
     Pit 130 5 0-100 0-100
-    Hill 25 10 0-100 0-100
+    Hill 25 12 0-100 0-100
     Pit 35 220 0-100 0-100
     Trough 65 160 0-100 0-100
     Mask 1.2 0 0 0
@@ -15,7 +15,8 @@ const heightmapTemplates = (function () {
     Multiply 1.5 40-60 0 0
     Multiply 1.3 37-40 0 0
     Multiply 1.2 35-37 0 0
-    Add 10 63-100 0 0`;
+    Add 10 63-100 0 0
+    Strait 7 horizontal 0 0`;
     
   const volcano = `Hill 1 90-100 44-56 40-60
     Multiply 0.8 50-100 0 0
