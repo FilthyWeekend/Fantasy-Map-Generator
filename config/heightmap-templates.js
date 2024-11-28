@@ -12,10 +12,11 @@ const heightmapTemplates = (function () {
     Mask 1.2 0 0 0
     Multiply 0.7 all 0 0
     Smooth 1 0 0 0
-    Multiply 1.5 40-60 0 0
-    Multiply 1.3 37-40 0 0
-    Multiply 1.2 35-37 0 0
-    Add 10 63-100 0 0
+    Multiply 1.5 50-60 0 0
+    Multiply 1.4 45-50 0 0
+    Multiply 1.3 40-45 0 0
+    Multiply 1.2 37-40 0 0
+    Multiply 1.1 35-37 0 0
     Strait 7 horizontal 0 0`;
     
   const volcano = `Hill 1 90-100 44-56 40-60

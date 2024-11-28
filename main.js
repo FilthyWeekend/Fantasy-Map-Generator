@@ -945,8 +945,15 @@ function calculateTemperatures() {
   function getAltitudeTemperatureDrop(h, l) {
     if (h < 20) return 0;
     const height = Math.pow(h - 18, exponent);
-    const tempDropPkm = Math.abs(l) < 20 ? 1.5 : 6.5
+    const tempDropPkm = getLatBasedTempDropRate(l)
     return rn((height / 1000) * tempDropPkm);
+  }
+
+  function getLatBasedTempDropRate(l) {
+    const absLat = Math.abs(l);
+    if (l < 20) return 1;
+    if (l < 30) return 4;
+    return 6.5;
   }
 
   TIME && console.timeEnd("calculateTemperatures");
