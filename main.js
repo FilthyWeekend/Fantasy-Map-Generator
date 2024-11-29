@@ -951,9 +951,8 @@ function calculateTemperatures() {
 
   function getLatBasedTempDropRate(l) {
     const absLat = Math.abs(l);
-    if (l < 20) return 1;
-    if (l < 30) return 4;
-    return 6.5;
+    if (l < 15) return 1;
+    return 5;
   }
 
   TIME && console.timeEnd("calculateTemperatures");

@@ -78,8 +78,8 @@ window.NBiomes = (function () {
     const biomesMartix = [
       // hot ↔ cold [>19°C; <-4°C]; dry ↕ wet
       new Uint8Array([1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 10, 10, 17]),
-      new Uint8Array([1, 1, 1, 6, 6, 6, 6, 6, 6, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 9, 10, 10, 10, 10, 3]),
-      new Uint8Array([5, 11, 11, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 2, 2, 2, 4, 9, 9, 9, 9, 10, 10, 18, 3]),
+      new Uint8Array([1, 1, 1, 6, 6, 6, 6, 6, 6, 6, 6, 6, 2, 2, 2, 2, 2, 2, 2, 2, 9, 10, 10, 10, 10, 3]),
+      new Uint8Array([5, 11, 11, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 8, 2, 2, 2, 4, 9, 9, 9, 10, 10, 18, 3]),
       new Uint8Array([5, 16, 11, 8, 8, 8, 6, 6, 8, 8, 8, 8, 8, 8, 8, 8, 4, 9, 9, 9, 9, 16, 9, 10, 3, 3]),
       new Uint8Array([5, 11, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 4, 4, 9, 9, 9, 9, 9, 10, 3, 3, 3])
     ];
@@ -147,7 +147,7 @@ window.NBiomes = (function () {
   function getId(moisture, temperature, height, hasRiver, latitude, cellId) {
     if (height < MIN_LAND_HEIGHT) return 0; // all water cells: marine biome
     if (isGorge(height, hasRiver, cellId)) return 15;
-    if (height > 45) return assignHighlandId(temperature);
+    if (height > 45) return assignHighlandId(temperature, hasRiver);
     if (temperature > 20 && moisture > 30 && height < 25) return 7; // swamp
     if (isMarsh(moisture, temperature, height)) return 12; // too wet: masrh biome
 
@@ -157,10 +157,11 @@ window.NBiomes = (function () {
     return biomesData.biomesMartix[moistureBand][temperatureBand];
   }
 
-  function assignHighlandId(temp) {
-    if (temp > 15) return 13; // cloud mountain
-    if (temp < 10) return 14; // snow mountain
-    return 16; 
+  function assignHighlandId(temp, hasRiver) {
+    if (temp > 14) return 13; // cloud mountain
+    if (temp < 11) return 14; // snow mountain
+    if (!hasRiver) return 16; // springland
+    return 11; // bamboo grove
   }
 
   function isGorge(height, hasRiver, cellId) {

@@ -1,22 +1,45 @@
 "use strict";
 
 const heightmapTemplates = (function () {
-  const dt = `Hill 7 160 0-100 0-100
-    Range 7 50 0-100 0-100
-    Mask -2 0 0 0
-    Trough 100 10 0-100 0-100
-    Pit 130 5 0-100 0-100
-    Hill 25 12 0-100 0-100
-    Pit 35 220 0-100 0-100
-    Trough 65 160 0-100 0-100
+  const dt = `Hill 2 150 0-50 0-50
+    Hill 2 150 0-50 50-100
+    Hill 2 150 50-100 0-50
+    Hill 2 150 50-100 50-100
+    Range 5 500 0-100 0-50
+    Range 5 500 0-100 50-100
+    Mask -2.5 0 0 0
+    Trough 25 10 0-50 0-50
+    Trough 25 10 0-50 50-100
+    Trough 25 10 50-100 0-50
+    Trough 25 10 50-100 50-100
+    Pit 20 5 0-50 0-50
+    Pit 20 5 0-50 50-100
+    Pit 20 5 50-100 0-50
+    Pit 20 5 50-100 50-100
+    Hill 5 12 0-50 0-50
+    Hill 5 12 0-50 50-100
+    Hill 5 12 50-100 0-50
+    Hill 5 12 50-100 50-100
+    Pit 5 220 0-50 0-50
+    Pit 5 220 0-50 50-100
+    Pit 5 220 50-100 0-50
+    Pit 5 220 50-100 50-100
+    Trough 10 160 0-50 0-50
+    Trough 10 160 0-50 50-100
+    Trough 10 160 50-100 0-50
+    Trough 10 160 50-100 50-100
     Mask 1.2 0 0 0
     Multiply 0.7 all 0 0
+    Multiply 2 51-60 0 0
+    Multiply 1.8 48-51 0 0
+    Multiply 1.6 46-48 0 0
+    Multiply 1.4 44-46 0 0
+    Multiply 1.3 42-44 0 0
+    Multiply 0.9 0-40 0 0
     Smooth 1 0 0 0
-    Multiply 1.5 50-60 0 0
-    Multiply 1.4 45-50 0 0
-    Multiply 1.3 40-45 0 0
-    Multiply 1.2 37-40 0 0
-    Multiply 1.1 35-37 0 0
+    Strait 7 horizontal 0 0
+    Strait 7 vertical 0 0
+    Strait 7 vertical 0 0
     Strait 7 horizontal 0 0`;
     
   const volcano = `Hill 1 90-100 44-56 40-60
