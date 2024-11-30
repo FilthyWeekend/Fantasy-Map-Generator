@@ -25,7 +25,8 @@ window.NBiomes = (function () {
       "Springland",
       "Lavaland",
       "Iceland",
-      "Kelp forest"
+      "Kelp forest",
+      "Island"
     ];
 
     const color = [
@@ -48,10 +49,11 @@ window.NBiomes = (function () {
       "#ed7b09",
       "#fa0505",
       "#81f7ed",
-      "#4cf5ba"
+      "#4cf5ba",
+      "#8a00a6"
     ];
-    const habitability = [0, 4, 10, 22, 30, 50, 100, 80, 90, 12, 4, 0, 12, 50, 20, 100, 100, 0, 0, 0];
-    const iconsDensity = [0, 3, 2, 120, 120, 120, 120, 150, 150, 100, 5, 0, 250, 200, 10, 100, 100, 10, 10, 10];
+    const habitability = [0, 4, 10, 22, 30, 50, 100, 80, 90, 12, 4, 0, 12, 50, 20, 100, 100, 0, 0, 0, 100];
+    const iconsDensity = [0, 3, 2, 120, 120, 120, 120, 150, 150, 100, 5, 0, 250, 200, 10, 100, 100, 10, 10, 10, 50];
     const icons = [
       {},
       {dune: 3, cactus: 6, deadTree: 1},
@@ -72,9 +74,10 @@ window.NBiomes = (function () {
       {},
       {},
       {},
-      {}
+      {},
+      {palm: 1}
     ];
-    const cost = [10, 200, 150, 60, 50, 70, 70, 80, 90, 200, 1000, 5000, 150, 1000, 1000, 500, 500, 500, 500, 1000]; // biome movement cost
+    const cost = [10, 200, 150, 60, 50, 70, 70, 80, 90, 200, 1000, 5000, 150, 1000, 1000, 500, 500, 500, 500, 1000, 100]; // biome movement cost
     const biomesMartix = [
       // hot ↔ cold [>19°C; <-4°C]; dry ↕ wet
       new Uint8Array([1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 10, 10, 17]),
@@ -110,24 +113,43 @@ window.NBiomes = (function () {
       const height = heights[cellId];
       const moisture = height < MIN_LAND_HEIGHT ? 0 : calculateMoisture(cellId);
       const temperature = temp[gridReference[cellId]];
-      const latitude = lat[gridReference[cellId]];
-      pack.cells.biome[cellId] = getId(moisture, temperature, height, Boolean(riverIds[cellId]), latitude, cellId);
+      pack.cells.biome[cellId] = getId(moisture, temperature, height, Boolean(riverIds[cellId]), cellId);
     }
 
-    const {biome: biomes} = pack.cells;
+    const maxIslandSize = 30;
+    const tropicIslandLat = 22;
+    const polarIslandLat = 55;
 
-    for (let cellId = 0; cellId < heights.length; cellId++) {
+    // mark island biomes
+    for (let cellId = 0; cellId < heights.length; cellId++) { 
       const height = heights[cellId];
-      if (height >= MIN_LAND_HEIGHT) continue;
+      const latitude = Math.abs(lat[gridReference[cellId]]);
+      const biome = pack.cells.biome[cellId];
+      if (height < MIN_LAND_HEIGHT ||  biome == 20 || biome == 18 ) continue;
 
-      pack.cells.biome[cellId] = getWaterBiomeId(cellId);
+      const visitedCells = [cellId];
+
+      if ((latitude < tropicIslandLat || latitude > polarIslandLat) && isIsland(cellId, visitedCells)) {
+        const islandType = Math.abs(latitude) < tropicIslandLat ? 20 : 18
+        visitedCells.forEach(islandCellId => pack.cells.biome[islandCellId] = islandType);
+      }
     }
 
-    function getWaterBiomeId(cellId) {
-      const height = heights[cellId];
+    function isIsland(cellId, visitedCells) {
+      const adjacentLandCells = neighbors[cellId]
+        .filter(neibCellId => 
+          heights[neibCellId] >= MIN_LAND_HEIGHT
+          && !visitedCells.includes(neibCellId));
 
-      if (height > 9 && neighbors[cellId].some(neibCellId => biomes[cellId] == 6)) return 19;
-      return 0;
+      if (adjacentLandCells.length == 0) return true;
+        
+      for (const adjCellId of adjacentLandCells) {
+        visitedCells.push(adjCellId);
+        if (visitedCells.length > maxIslandSize) return false;
+        if (!isIsland(adjCellId, visitedCells)) return false;
+      };
+
+      return true;
     }
 
     function calculateMoisture(cellId) {
@@ -144,7 +166,7 @@ window.NBiomes = (function () {
     TIME && console.timeEnd("defineBiomes");
   }
 
-  function getId(moisture, temperature, height, hasRiver, latitude, cellId) {
+  function getId(moisture, temperature, height, hasRiver, cellId) {
     if (height < MIN_LAND_HEIGHT) return 0; // all water cells: marine biome
     if (isGorge(height, hasRiver, cellId)) return 15;
     if (height > 45) return assignHighlandId(temperature, hasRiver);
