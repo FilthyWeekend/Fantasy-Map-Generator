@@ -21,12 +21,14 @@ window.NBiomes = (function () {
       "Marsh",
       "Cloud mountain",
       "Snow mountain",
-      "Feyland", // 15
+      "Scarland", // 15
       "Springland",
       "Lavaland",
       "Iceland",
       "Kelp forest",
-      "Island"
+      "Island", // 20,
+      "Coral reef",
+      "Ice floes"
     ];
 
     const color = [
@@ -49,35 +51,111 @@ window.NBiomes = (function () {
       "#ed7b09",
       "#fa0505",
       "#81f7ed",
-      "#4cf5ba",
-      "#8a00a6"
+      "#4f0cc4",
+      "#8a00a6", // 20
+      "#47f2f5",
+      "#096596"
     ];
-    const habitability = [0, 4, 10, 22, 30, 50, 100, 80, 90, 12, 4, 0, 12, 50, 20, 100, 100, 0, 0, 0, 100];
-    const iconsDensity = [0, 3, 2, 120, 120, 120, 120, 150, 150, 100, 5, 0, 250, 200, 10, 100, 100, 10, 10, 10, 50];
+    const habitability = [
+      0,
+      4, 
+      10, 
+      2, 
+      30, 
+      50, 
+      100, // 6
+      80, 
+      90, 
+      12, 
+      4, 
+      0, 
+      12, 
+      50, 
+      20, 
+      100, 
+      100, 
+      0, 
+      0, 
+      0, 
+      100,
+      0,
+      0
+    ];
+    const iconsDensity = [
+      0, 
+      3, 
+      2, 
+      120, 
+      120, 
+      120, 
+      80, // 6
+      150, 
+      200, 
+      100, 
+      5, 
+      0, 
+      250, 
+      200, 
+      10, 
+      100, 
+      100, 
+      1, 
+      10, 
+      10, 
+      50, // 20
+      0,
+      0
+    ];
     const icons = [
       {},
-      {dune: 3, cactus: 6, deadTree: 1},
-      {dune: 9, deadTree: 1},
-      {acacia: 1, grass: 9},
-      {grass: 1},
+      {dune: 3, cactus: 6, },
+      {dune: 9, },
+      {swamp: 1, grass: 9},
+      {deadTree: 8, swamp: 2},
       {acacia: 8, palm: 1},
-      {deciduous: 1},
+      {grass: 9, deciduous: 1}, // 6
       {acacia: 5, swamp: 5},
-      {palm: 6, swamp: 1},
-      {conifer: 1},
+      {deciduous: 9, conifer: 1},
+      {coniferSnow: 1},
       {grass: 1},
       {},
       {swamp: 1},
       {acacia: 1},
-      {conifer: 1},
+      {coniferSnow: 1},
       {},
       {},
+      {vulcan: 1},
       {},
       {},
+      {palm: 1}, // 20
       {},
-      {palm: 1}
+      {}
     ];
-    const cost = [10, 200, 150, 60, 50, 70, 70, 80, 90, 200, 1000, 5000, 150, 1000, 1000, 500, 500, 500, 500, 1000, 100]; // biome movement cost
+    const cost = [ // biome movement cost
+      10, 
+      200, 
+      150, 
+      60, 
+      50, 
+      70, 
+      50, // 6
+      80, 
+      120, 
+      200, 
+      1000, 
+      5000, 
+      150, 
+      1000, 
+      1000, 
+      500, 
+      500, 
+      500, 
+      500, 
+      1000, 
+      100,
+      20,
+      30
+    ]; 
     const biomesMartix = [
       // hot ↔ cold [>19°C; <-4°C]; dry ↕ wet
       new Uint8Array([1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 10, 10, 17]),
@@ -117,22 +195,45 @@ window.NBiomes = (function () {
     }
 
     const maxIslandSize = 30;
-    const tropicIslandLat = 22;
+    const tropicIslandLat = 20;
     const polarIslandLat = 55;
 
-    // mark island biomes
+    // recolour island biomes
     for (let cellId = 0; cellId < heights.length; cellId++) { 
       const height = heights[cellId];
       const latitude = Math.abs(lat[gridReference[cellId]]);
       const biome = pack.cells.biome[cellId];
-      if (height < MIN_LAND_HEIGHT ||  biome == 20 || biome == 18 ) continue;
 
-      const visitedCells = [cellId];
-
-      if ((latitude < tropicIslandLat || latitude > polarIslandLat) && isIsland(cellId, visitedCells)) {
-        const islandType = Math.abs(latitude) < tropicIslandLat ? 20 : 18
-        visitedCells.forEach(islandCellId => pack.cells.biome[islandCellId] = islandType);
+      if (height < MIN_LAND_HEIGHT - 1) {
+        pack.cells.biome[cellId] = assignCoastBiome(cellId);
+      } else if (biome != 20 && biome != 18) { // sea or already marked as island
+        const visitedCells = [cellId];
+  
+        if ((latitude < tropicIslandLat || latitude > polarIslandLat) && isIsland(cellId, visitedCells)) {
+          const islandType = Math.abs(latitude) < tropicIslandLat ? 20 : 18
+          visitedCells.forEach(islandCellId => pack.cells.biome[islandCellId] = islandType);
+        }
       }
+    }
+
+    function assignCoastBiome(cellId) {
+      var biomeId = 0;
+      for (const adjCellId of neighbors[cellId]) {
+        const adjBiome = pack.cells.biome[adjCellId];
+        if ([2, 6, 8, 15].includes(adjBiome)) {
+          biomeId = 19;
+          break;
+        }
+        if ([5, 13, 20].includes(adjBiome)) {
+          biomeId = 21;
+          break;
+        }
+        if ([3, 18].includes(adjBiome)) {
+          biomeId = 22;
+          break;
+        }
+      }
+      return biomeId;
     }
 
     function isIsland(cellId, visitedCells) {
@@ -209,8 +310,6 @@ window.NBiomes = (function () {
     if (moisture > 30 && height < 25) return true; // near coast
     return false;
   }
-
-  
 
   return {getDefault, define, getId};
 })();
