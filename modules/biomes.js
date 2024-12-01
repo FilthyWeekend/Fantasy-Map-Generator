@@ -159,8 +159,8 @@ window.NBiomes = (function () {
     const biomesMartix = [
       // hot ↔ cold [>19°C; <-4°C]; dry ↕ wet
       new Uint8Array([1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 10, 10, 17]),
-      new Uint8Array([1, 1, 1, 6, 6, 6, 6, 6, 6, 6, 6, 6, 2, 2, 2, 2, 2, 2, 2, 2, 9, 10, 10, 10, 10, 3]),
-      new Uint8Array([5, 11, 11, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 8, 2, 2, 2, 4, 9, 9, 9, 10, 10, 18, 3]),
+      new Uint8Array([1, 1, 2, 6, 6, 6, 6, 6, 6, 6, 6, 6, 2, 2, 2, 2, 2, 2, 2, 2, 9, 10, 10, 10, 10, 3]),
+      new Uint8Array([5, 1, 11, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 8, 2, 2, 2, 4, 9, 9, 9, 10, 10, 18, 3]),
       new Uint8Array([5, 16, 11, 8, 8, 8, 6, 6, 8, 8, 8, 8, 8, 8, 8, 8, 4, 9, 9, 9, 9, 16, 9, 10, 3, 3]),
       new Uint8Array([5, 11, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 4, 4, 9, 9, 9, 9, 9, 10, 3, 3, 3])
     ];
@@ -184,6 +184,7 @@ window.NBiomes = (function () {
     TIME && console.time("defineBiomes");
 
     const {fl: flux, r: riverIds, h: heights, c: neighbors, g: gridReference} = pack.cells;
+    const {cells, features} = pack;
     const {temp, prec, lat} = grid.cells;
     pack.cells.biome = new Uint8Array(pack.cells.i.length); // biomes array
 
@@ -191,21 +192,22 @@ window.NBiomes = (function () {
       const height = heights[cellId];
       const moisture = height < MIN_LAND_HEIGHT ? 0 : calculateMoisture(cellId);
       const temperature = temp[gridReference[cellId]];
-      pack.cells.biome[cellId] = getId(moisture, temperature, height, Boolean(riverIds[cellId]), cellId);
+      const latitude = lat[gridReference[cellId]];
+      pack.cells.biome[cellId] = getId(moisture, temperature, height, Boolean(riverIds[cellId]), latitude, cellId);
     }
 
     const maxIslandSize = 30;
     const tropicIslandLat = 20;
     const polarIslandLat = 55;
 
-    // recolour island biomes
+    // recolour island & coast biomes
     for (let cellId = 0; cellId < heights.length; cellId++) { 
       const height = heights[cellId];
       const latitude = Math.abs(lat[gridReference[cellId]]);
       const biome = pack.cells.biome[cellId];
 
-      if (height < MIN_LAND_HEIGHT - 1) {
-        pack.cells.biome[cellId] = assignCoastBiome(cellId);
+      if (height < MIN_LAND_HEIGHT - 1 && features[cells.f[cellId]].type !== "lake") {
+        pack.cells.biome[cellId] = assignCoastBiome(cellId, height, latitude);
       } else if (biome != 20 && biome != 18) { // sea or already marked as island
         const visitedCells = [cellId];
   
@@ -216,20 +218,20 @@ window.NBiomes = (function () {
       }
     }
 
-    function assignCoastBiome(cellId) {
+    function assignCoastBiome(cellId, height, latitude) {
       var biomeId = 0;
       for (const adjCellId of neighbors[cellId]) {
         const adjBiome = pack.cells.biome[adjCellId];
-        if ([2, 6, 8, 15].includes(adjBiome)) {
-          biomeId = 19;
+        if ([2, 6, 8, 15].includes(adjBiome) && height < 18) {
+          biomeId = 19; // kelp forest
           break;
         }
-        if ([5, 13, 20].includes(adjBiome)) {
-          biomeId = 21;
+        if ([1, 5, 13, 20].includes(adjBiome) && latitude < 15) {
+          biomeId = 21; // coral reef
           break;
         }
         if ([3, 18].includes(adjBiome)) {
-          biomeId = 22;
+          biomeId = 22; // ice floe
           break;
         }
       }
@@ -267,11 +269,11 @@ window.NBiomes = (function () {
     TIME && console.timeEnd("defineBiomes");
   }
 
-  function getId(moisture, temperature, height, hasRiver, cellId) {
+  function getId(moisture, temperature, height, hasRiver, latitude, cellId) {
     if (height < MIN_LAND_HEIGHT) return 0; // all water cells: marine biome
     if (isGorge(height, hasRiver, cellId)) return 15;
-    if (height > 45) return assignHighlandId(temperature, hasRiver);
-    if (temperature > 20 && moisture > 30 && height < 25) return 7; // swamp
+    if (height > 45) return assignHighlandId(temperature, latitude, hasRiver);
+    if (temperature > 20 && moisture > 25 && height < 25) return 7; // swamp
     if (isMarsh(moisture, temperature, height)) return 12; // too wet: masrh biome
 
     // in other cases use biome matrix
@@ -280,9 +282,10 @@ window.NBiomes = (function () {
     return biomesData.biomesMartix[moistureBand][temperatureBand];
   }
 
-  function assignHighlandId(temp, hasRiver) {
-    if (temp > 14) return 13; // cloud mountain
-    if (temp < 11) return 14; // snow mountain
+  function assignHighlandId(temp, latitude, hasRiver) {
+    const absLat = Math.abs(latitude);
+    if (temp > 14 && absLat < 17) return 13; // cloud mountain
+    if (temp < 11 && absLat > 18) return 14; // snow mountain
     if (!hasRiver) return 16; // springland
     return 11; // bamboo grove
   }
@@ -306,7 +309,7 @@ window.NBiomes = (function () {
   }
 
   function isMarsh(moisture, temperature, height) {
-    if (temperature <= 0 || temperature > 20) return false; // too cold or too hot
+    if (temperature <= 4 || temperature > 20) return false; // too cold or too hot
     if (moisture > 30 && height < 25) return true; // near coast
     return false;
   }

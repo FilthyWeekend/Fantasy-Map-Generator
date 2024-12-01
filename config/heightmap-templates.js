@@ -2,45 +2,45 @@
 
 const heightmapTemplates = (function () {
   const dt = `Hill 2 150 0-50 0-50
-    Hill 2 150 0-50 50-100
-    Hill 2 150 50-100 0-50
-    Hill 2 150 50-100 50-100
-    Range 5 500 0-100 0-50
-    Range 5 500 0-100 50-100
-    Mask -2.5 0 0 0
-    Trough 25 10 0-50 0-50
-    Trough 25 10 0-50 50-100
-    Trough 25 10 50-100 0-50
-    Trough 25 10 50-100 50-100
-    Pit 20 5 0-50 0-50
-    Pit 20 5 0-50 50-100
-    Pit 20 5 50-100 0-50
-    Pit 20 5 50-100 50-100
-    Hill 5 12 0-50 0-50
-    Hill 5 12 0-50 50-100
-    Hill 5 12 50-100 0-50
-    Hill 5 12 50-100 50-100
-    Pit 5 220 0-50 0-50
-    Pit 5 220 0-50 50-100
-    Pit 5 220 50-100 0-50
-    Pit 5 220 50-100 50-100
-    Trough 10 160 0-50 0-50
-    Trough 10 160 0-50 50-100
-    Trough 10 160 50-100 0-50
-    Trough 10 160 50-100 50-100
-    Mask 1.2 0 0 0
-    Multiply 0.7 all 0 0
-    Multiply 2 51-60 0 0
-    Multiply 1.8 48-51 0 0
-    Multiply 1.6 46-48 0 0
-    Multiply 1.4 44-46 0 0
-    Multiply 1.3 42-44 0 0
-    Multiply 0.9 0-40 0 0
-    Smooth 1 0 0 0
-    Strait 7 horizontal 0 0
-    Strait 7 vertical 0 0
-    Strait 7 vertical 0 0
-    Strait 7 horizontal 0 0`;
+Hill 2 150 0-50 50-100
+Hill 2 150 50-100 0-50
+Hill 2 150 50-100 50-100
+Range 5 500 0-100 0-50
+Range 5 500 0-100 50-100
+Mask -2.5 0 0 0
+Trough 25 10 0-50 0-50
+Trough 25 10 0-50 50-100
+Trough 25 10 50-100 0-50
+Trough 25 10 50-100 50-100
+Pit 20 5 0-50 0-50
+Pit 20 5 0-50 50-100
+Pit 20 5 50-100 0-50
+Pit 20 5 50-100 50-100
+Hill 5 12 0-50 0-50
+Hill 5 12 0-50 50-100
+Hill 5 12 50-100 0-50
+Hill 5 12 50-100 50-100
+Pit 5 220 0-45 0-50
+Pit 5 220 0-45 50-100
+Pit 5 220 55-100 0-50
+Pit 5 220 55-100 50-100
+Trough 10 160 0-45 20-50
+Trough 10 160 0-45 50-80
+Trough 10 160 55-100 20-50
+Trough 10 160 55-100 50-80
+Mask 1.2 0 0 0
+Multiply 0.7 all 0 0
+Multiply 2 51-60 0 0
+Multiply 1.8 48-51 0 0
+Multiply 1.6 46-48 0 0
+Multiply 1.4 44-46 0 0
+Multiply 1.3 42-44 0 0
+Multiply 0.9 0-40 0 0
+Smooth 1 0 0 0
+Strait 7 horizontal 0 0
+Strait 7 vertical 0 0
+Strait 7 vertical 0 0
+Strait 7 horizontal 0 0`;
     
   const volcano = `Hill 1 90-100 44-56 40-60
     Multiply 0.8 50-100 0 0
