@@ -53,7 +53,7 @@ window.NBiomes = (function () {
       "#81f7ed",
       "#4f0cc4",
       "#8a00a6", // 20
-      "#47f2f5",
+      "#68e8b5",
       "#096596"
     ];
     const habitability = [
@@ -159,8 +159,8 @@ window.NBiomes = (function () {
     const biomesMartix = [
       // hot ↔ cold [>19°C; <-4°C]; dry ↕ wet
       new Uint8Array([1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 10, 10, 17]),
-      new Uint8Array([1, 1, 2, 6, 6, 6, 6, 6, 6, 6, 6, 6, 2, 2, 2, 2, 2, 2, 2, 2, 9, 10, 10, 10, 10, 3]),
-      new Uint8Array([5, 1, 11, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 8, 2, 2, 2, 4, 9, 9, 9, 10, 10, 18, 3]),
+      new Uint8Array([1, 1, 2, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 2, 2, 2, 2, 2, 2, 2, 9, 10, 10, 10, 10, 3]),
+      new Uint8Array([1, 5, 11, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 8, 8, 2, 2, 2, 4, 9, 9, 9, 10, 10, 18, 3]),
       new Uint8Array([5, 16, 11, 8, 8, 8, 6, 6, 8, 8, 8, 8, 8, 8, 8, 8, 4, 9, 9, 9, 9, 16, 9, 10, 3, 3]),
       new Uint8Array([5, 11, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 4, 4, 9, 9, 9, 9, 9, 10, 3, 3, 3])
     ];
@@ -273,7 +273,7 @@ window.NBiomes = (function () {
     if (height < MIN_LAND_HEIGHT) return 0; // all water cells: marine biome
     if (isGorge(height, hasRiver, cellId)) return 15;
     if (height > 45) return assignHighlandId(temperature, latitude, hasRiver);
-    if (temperature > 20 && moisture > 25 && height < 25) return 7; // swamp
+    if (temperature > 20 && moisture > 30 && height < 23) return 7; // swamp
     if (isMarsh(moisture, temperature, height)) return 12; // too wet: masrh biome
 
     // in other cases use biome matrix
@@ -310,7 +310,7 @@ window.NBiomes = (function () {
 
   function isMarsh(moisture, temperature, height) {
     if (temperature <= 4 || temperature > 20) return false; // too cold or too hot
-    if (moisture > 30 && height < 25) return true; // near coast
+    if (moisture > 30 && height < 23) return true; // near coast
     return false;
   }
 

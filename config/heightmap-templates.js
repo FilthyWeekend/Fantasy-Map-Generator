@@ -24,10 +24,12 @@ Pit 5 220 0-45 0-50
 Pit 5 220 0-45 50-100
 Pit 5 220 55-100 0-50
 Pit 5 220 55-100 50-100
-Trough 10 160 0-45 20-50
-Trough 10 160 0-45 50-80
-Trough 10 160 55-100 20-50
-Trough 10 160 55-100 50-80
+Trough 13 180 0-45 20-50
+Trough 13 180 0-45 50-80
+Trough 13 180 55-100 20-50
+Trough 13 180 55-100 50-80
+Hill 5 12 20-80 0-10
+Hill 5 12 20-80 90-100
 Mask 1.2 0 0 0
 Multiply 0.7 all 0 0
 Multiply 2 51-60 0 0
@@ -37,10 +39,12 @@ Multiply 1.4 44-46 0 0
 Multiply 1.3 42-44 0 0
 Multiply 0.9 0-40 0 0
 Smooth 1 0 0 0
-Strait 7 horizontal 0 0
-Strait 7 vertical 0 0
-Strait 7 vertical 0 0
-Strait 7 horizontal 0 0`;
+Strait 4 horizontal 0 0
+Strait 4 horizontal 0 0
+Strait 4 horizontal 0 0
+Strait 3 vertical 25 0
+Strait 4 vertical 50 0
+Strait 3 vertical 75 0`;
     
   const volcano = `Hill 1 90-100 44-56 40-60
     Multiply 0.8 50-100 0 0
